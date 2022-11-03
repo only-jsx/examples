@@ -15,9 +15,10 @@ export interface AppProps {
 
 export default ({ props, children, ref }: { props: AppProps, children?: OptionsChildren, ref: JsxRef }) => {
     const result: { current?: HTMLElement } = {};
-    const e = <div data-custom-sum={props.a + props.b} class={styles.container}>
+    const {a, b, replace} = props;
+    const e = <div data-custom-sum={a + b} class={styles.container}>
         {children}
-        <span>{props.a}+{props.b}={props.a + props.b}</span>
+        <span>{a}+{b}={a + b}</span>
         <button onclick={onClickFetch}>Fetch</button>
         <div id='counter' style='color: blue;'></div>
         <div ref={result}></div>
@@ -28,7 +29,7 @@ export default ({ props, children, ref }: { props: AppProps, children?: OptionsC
 
     function onClickReplace() {
         const ne = <p>App content was completely replaced</p>;
-        props.replace(ne);
+        replace(ne);
         props.update = function () {
             ne.innerText = this.a + '+' + this.b + '=' + (this.a + this.b);
         }
