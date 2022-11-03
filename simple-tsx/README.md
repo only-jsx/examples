@@ -1,7 +1,7 @@
 # simple-tsx example
 This contains an example of using only-jsx runtime with typescript.
 
-##install
+## install
 
 ```npm install```
 
