@@ -30,7 +30,7 @@ export default ({ props, children, ref }: { props: AppProps, children?: OptionsC
         const ne = <p>App content was completely replaced</p>;
         props.replace(ne);
         props.update = function () {
-            ne.innerText = props.a + '+' + props.b + '=' + (props.a + props.b);
+            ne.innerText = this.a + '+' + this.b + '=' + (this.a + this.b);
         }
         ref.current = ne;
     }
@@ -53,7 +53,7 @@ export default ({ props, children, ref }: { props: AppProps, children?: OptionsC
 
     props.update = function () {
         e.dataset.customSum = this.a + this.b;
-        e.querySelector(':nth-child(2)').innerText = props.a + '+' + props.b + '=' + (props.a + props.b);
+        e.querySelector(':nth-child(2)').innerText = this.a + '+' + this.b + '=' + (this.a + this.b);
     }
 
     return e;
