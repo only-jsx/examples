@@ -1,0 +1,7 @@
+
+.container {
+    display: flex;
+    flex-direction: row;
+    align-content: space-between;
+    column-gap: 20px;
+}

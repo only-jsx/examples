@@ -1,0 +1,6 @@
+*
+!nginx.conf
+!index.html
+!dashboard/dist
+!simple-tsx/dist
+!simple-jsx/dist

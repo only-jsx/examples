@@ -1,0 +1,93 @@
+.container {
+    position: relative;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 24px;
+    padding: 16px;
+    background: var(--color-white);
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+}
+
+.card {
+    display: block;
+    border: none;
+    margin-top: 8px;
+    font-weight: normal;
+    font-size: 14px;
+    text-align: left;
+    line-height: 18px;
+    padding: 8px;
+    color: var(--color-text);
+    width: 100%;
+    background: var(--color-white);
+    border-radius: 5px;
+    height: 50px;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.activeCard, .card:focus, .card:active, .card:hover {
+    color: var(--color-active-team-card-text);
+    border: none;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1), 0px 0px 6px rgba(0, 0, 0, 0.1);
+}
+
+.activeCard .leader, .card:focus .leader, .card:active .leader, .card:hover .leader{
+    color: var(--color-active-team-card-leader-text);
+}
+
+.card:hover {
+    background: none;
+}
+
+.card:focus {
+    outline: 'none';
+    background: none;
+}
+
+.column {
+    width: calc(33% - 13px); /* 33% - 40/3px */
+}
+
+.counter {
+    float: right;
+    font-weight: 500;
+    color: var(--color-text);
+}
+
+.leader {
+    font-weight: normal;
+    font-size: 12px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: var(--color-team-card-leader-text);
+}
+
+.name {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.rightSpan {
+    float: right;
+    color: var(--color-right-text);
+    font-size: 14px;
+    line-height: 24px;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    align-content: space-between;
+    column-gap: 20px;
+}
+
+.title {
+    padding: 8px;
+}

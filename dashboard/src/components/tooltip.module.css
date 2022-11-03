@@ -1,0 +1,25 @@
+.body {
+    cursor: pointer;
+    width: 100%;
+}
+
+.body input {
+    cursor: pointer;
+}
+
+.content {
+    position: fixed;
+    z-index: 999;
+    display: block;
+    max-width: 280px;
+    padding: 8px 12px;
+    font-size: 14px;
+    color: var(--color-tooltip-text);
+    word-wrap: break-word;
+    opacity: 0;
+    transition: 0.5s opacity;
+    background-color: var(--color-tooltip-background);
+    box-shadow: var(--shadow-tooltip);
+    border-radius: 5px;
+    user-select: none;
+}
