@@ -1,0 +1,21 @@
+
+.container {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    font-weight: 500;
+    font-size: 24px;
+    margin-bottom: 16px;
+    margin-top: 24px;
+    line-height: normal;
+}
+
+.rightSpan {
+    font-size: 14px;
+}
+
+.image {
+    vertical-align: text-top;
+    margin-right: 8px;
+}

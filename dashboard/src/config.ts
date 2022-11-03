@@ -1,0 +1,1 @@
+export const apiUrl = (prefix: string)=>`https://${prefix}-ghgwgbpcva-lm.a.run.app`;
