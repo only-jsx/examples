@@ -4,15 +4,13 @@ import App, {AppProps} from './App';
 import reportWebVitals from './reportWebVitals';
 
 function render() {
-    window.onload = () => {
-        const e = document.getElementById('root');
+    const root = document.getElementById('root');
 
-        const appState: AppProps = {replace: (children)=>e?.replaceChildren(children)};
+    const appState: AppProps = {replace: (children)=>root.replaceChildren(children)};
 
-        e?.replaceChildren(<App props={appState}/>);
+    root.replaceChildren(<App props={appState}/>);
 
-        window.onunload = ()=>{appState.onunload?.()};
-    }
+    window.onunload = ()=>{appState.onunload?.()};
 }
 
 render();
