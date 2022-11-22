@@ -29,8 +29,7 @@ export function sleep(n: number, signal: AbortSignal) {
             clearInterval(timeout);
             reject('Sleep rejected!');
         });
-    }
-    );
+    });
 }
 
 export async function getTodos(signal: AbortSignal): Promise<Todos> {

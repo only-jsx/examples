@@ -1,8 +1,8 @@
 import { addTodo, deleteTodo, getTodos } from './todos';
 import { Context, Params, RouterContext } from 'only-jsx-router';
 
-export interface WithUnload { onunload?: () => void };
-export interface WithStateProps {state: WithUnload};
+export interface UnloadState { onunload?: () => void };
+export interface PropsWithState { state: UnloadState };
 
 function onClick(ctx: Context, e: Event) {
     e.preventDefault();
@@ -41,7 +41,7 @@ export function Home() {
     </>
 }
 
-export function TodosList({ state }: WithStateProps, ctx: Context) {
+export function TodosList({ state }: PropsWithState, ctx: Context) {
 
     const btnRef: { current?: HTMLButtonElement } = {};
     const urRef: { current?: HTMLElement } = {};
@@ -58,7 +58,7 @@ export function TodosList({ state }: WithStateProps, ctx: Context) {
     function fillTodos(todos: object) {
         Object.entries(todos).forEach(([id, todo]) => {
             urRef.current.appendChild(<li>
-                <TodoItem id={id} todo={todo} onClick={onclick} state={state}/>
+                <TodoItem id={id} todo={todo} onClick={onclick} state={state} />
             </li>);
         });
     }
@@ -73,9 +73,11 @@ export function TodosList({ state }: WithStateProps, ctx: Context) {
         btnRef.current.innerText = 'Adding...';
         btnRef.current.disabled = true;
 
+        state.onunload = () => controller.abort();
         await addTodo((formRef.current['todo'] as HTMLInputElement).value, controller.signal);
 
         const todos = await getTodos(controller.signal);
+        delete state.onunload;
 
         btnRef.current.innerText = 'Add';
         btnRef.current.disabled = false;
@@ -88,7 +90,7 @@ export function TodosList({ state }: WithStateProps, ctx: Context) {
         return false;
     }
 
-    getTodos(controller.signal).then(fillTodos);
+    getTodos(controller.signal).then(fillTodos).finally(() => delete state.onunload);
 
     const e = <>
         <h2>Todos</h2>
@@ -123,7 +125,7 @@ interface TodoItemstate {
     id: string;
     todo: string;
     onClick: (e: Event) => void;
-    state: WithUnload;
+    state: UnloadState;
 }
 
 export function TodoItem({ id, todo, onClick, state }: TodoItemstate) {
@@ -141,6 +143,7 @@ export function TodoItem({ id, todo, onClick, state }: TodoItemstate) {
         btnRef.current.innerText = 'Deleting...';
         btnRef.current.disabled = true;
         await deleteTodo((formRef.current['todoId'] as HTMLButtonElement).value, controller.signal);
+        delete state.onunload;
 
         btnRef.current.innerText = 'Delete';
         btnRef.current.disabled = false;
@@ -176,7 +179,7 @@ async function todoLoader(params: Params, signal: AbortSignal): Promise<string> 
     return todo;
 }
 
-export function Todo({ state }: WithStateProps, ctx: Context) {
+export function Todo({ state }: PropsWithState, ctx: Context) {
     const t = document.createComment('Todo will appear here soon');
     const { params } = ctx.router;
 
@@ -192,12 +195,12 @@ export function Todo({ state }: WithStateProps, ctx: Context) {
         console.log(error);
         const router = { ...ctx.router, error };
         t.parentNode?.replaceChild(<ErrorBoundary router={router}></ErrorBoundary>, t);
-    });
+    }).finally(() => delete state.onunload);
 
     return t;
 }
 
-export function AwaitPage({ state }: WithStateProps) {
+export function AwaitPage({ state }: PropsWithState) {
     const r: { current?: HTMLElement } = {};
     const t = <p ref={r}>Awaiting raw promise</p>;
 
@@ -218,12 +221,13 @@ export function AwaitPage({ state }: WithStateProps) {
     });
 
     rawPromise.then(data => r.current.innerText = data)
-        .catch(console.log);
+        .catch(console.log)
+        .finally(() => delete state.onunload);
 
     return t;
 }
 
-export function LongLoad({ state }: WithStateProps) {
+export function LongLoad({ state }: PropsWithState) {
     const r: { current?: HTMLElement } = {};
     const s = 'Loading...';
     const p = <p ref={r}>{s}</p>;
@@ -232,6 +236,7 @@ export function LongLoad({ state }: WithStateProps) {
         if (--n < 1) {
             r.current.parentNode.replaceChild(<h1>👋</h1>, r.current);
             clearInterval(id);
+            delete state.onunload;
         } else {
             r.current.innerText = s.substring(0, n);
         }
