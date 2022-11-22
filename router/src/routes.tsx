@@ -1,59 +1,44 @@
-import { addTodo, deleteTodo, getTodos } from "./todos";
+import { addTodo, deleteTodo, getTodos } from './todos';
+import { Context, Params, RouterContext } from 'only-jsx-router';
 
-function onClick(ctx: any, e: Event) {
+function onClick(ctx: Context, e: Event) {
     e.preventDefault();
     ctx.router?.navigate((e.target as HTMLAnchorElement).href);
 }
 
-export function Layout(props: any, ctx: any) {
+export function Layout(props: any, ctx: Context) {
     const onclick = onClick.bind(this, ctx);
     return (
         <>
             <nav>
-                <a href="/home" onclick={onclick}>Home</a>
+                <a href='/home' onclick={onclick}>Home</a>
                 &nbsp;|&nbsp;
-                <a href="/todos" onclick={onclick}>Todos</a>
+                <a href='/todos' onclick={onclick}>Todos</a>
                 &nbsp;|&nbsp;
-                <a href="/await" onclick={onclick}>Await</a>
+                <a href='/await' onclick={onclick}>Await</a>
                 &nbsp;|&nbsp;
-                <a href="/long-load" onclick={onclick}>Long Load</a>
+                <a href='/long-load' onclick={onclick}>Long Load</a>
                 &nbsp;|&nbsp;
-                <a href="/error" onclick={onclick}>Error</a>
+                <a href='/error' onclick={onclick}>Error</a>
                 &nbsp;|&nbsp;
-                <a href="/wrong" onclick={onclick}>Wrong path</a>
+                <a href='/wrong' onclick={onclick}>Wrong path</a>
             </nav>
             <p>
-                Click on over to <a href="/todos" onclick={onclick}>/todos</a> and check out these
+                Click on over to <a href='/todos' onclick={onclick}>/todos</a> and check out these
                 data loading APIs!
             </p>
         </>
     );
 }
 
-interface HomeLoaderData {
-    date: string;
-}
-
-async function homeLoader(): Promise<HomeLoaderData> {
-    return {
-        date: new Date().toISOString(),
-    };
-}
-
 export function Home() {
-    const p: { current?: HTMLElement } = {};
-    const last = 'Last loaded at:';
-    const e = <>
+    return <>
         <h2>Home</h2>
-        <p ref={p}>{last}</p>
+        <p>Last loaded at: {new Date().toISOString()}</p>
     </>
-    homeLoader().then(data => {
-        p.current.innerText = last + ' ' + data.date;
-    })
-    return e;
 }
 
-export function TodosList(props: any, ctx: any) {
+export function TodosList({ props }: { props: UnloadProps }, ctx: Context) {
 
     const btnRef: { current?: HTMLButtonElement } = {};
     const urRef: { current?: HTMLElement } = {};
@@ -62,7 +47,7 @@ export function TodosList(props: any, ctx: any) {
     const onclick = onClick.bind(this, ctx);
 
     const firstItem = <li>
-        <a href="/todos/junk" onclick={onclick}>
+        <a href='/todos/junk' onclick={onclick}>
             Click this a to force an error in the loader
         </a>
     </li>;
@@ -70,19 +55,24 @@ export function TodosList(props: any, ctx: any) {
     function fillTodos(todos: object) {
         Object.entries(todos).forEach(([id, todo]) => {
             urRef.current.appendChild(<li>
-                <TodoItem id={id} todo={todo} onClick={onclick} />
+                <TodoItem id={id} todo={todo} onClick={onclick} props={props}/>
             </li>);
         });
     }
+
+    const controller = new AbortController();
+
+    props.onunload = () => controller.abort();
 
     async function onSubmit(e: MouseEvent) {
         e.preventDefault();
 
         btnRef.current.innerText = 'Adding...';
         btnRef.current.disabled = true;
-        await addTodo((formRef.current['todo'] as HTMLInputElement).value);
 
-        const todos = await getTodos();
+        await addTodo((formRef.current['todo'] as HTMLInputElement).value, controller.signal);
+
+        const todos = await getTodos(controller.signal);
 
         btnRef.current.innerText = 'Add';
         btnRef.current.disabled = false;
@@ -95,7 +85,7 @@ export function TodosList(props: any, ctx: any) {
         return false;
     }
 
-    getTodos().then(fillTodos);
+    getTodos(controller.signal).then(fillTodos);
 
     const e = <>
         <h2>Todos</h2>
@@ -107,7 +97,7 @@ export function TodosList(props: any, ctx: any) {
             {firstItem}
         </ul>
         <form onsubmit={onSubmit} ref={formRef}>
-            <input name="todo"></input>
+            <input name='todo'></input>
             <button ref={btnRef}>Add</button>
         </form>
     </>
@@ -115,11 +105,11 @@ export function TodosList(props: any, ctx: any) {
     return e;
 }
 
-export function ErrorBoundary({router} : {router: any}) {
+export function ErrorBoundary({ router }: { router: RouterContext }) {
     return (
         <>
             <h2>Error 💥</h2>
-            <p>At path "{router.path}"</p>
+            <p>At path '{router.path}'</p>
             <p>Params: {JSON.stringify(router.params)}</p>
             <p>{router.error.message}</p>
         </>
@@ -130,9 +120,10 @@ interface TodoItemProps {
     id: string;
     todo: string;
     onClick: (e: Event) => void;
+    props: UnloadProps;
 }
 
-export function TodoItem({ id, todo, onClick }: TodoItemProps) {
+export function TodoItem({ id, todo, onClick, props }: TodoItemProps) {
 
     const btnRef: { current?: HTMLButtonElement } = {};
     const formRef: { current?: HTMLFormElement } = {};
@@ -140,9 +131,13 @@ export function TodoItem({ id, todo, onClick }: TodoItemProps) {
     async function onSubmit(e: MouseEvent) {
         e.preventDefault();
 
+        const controller = new AbortController();
+
+        props.onunload = () => controller.abort();
+
         btnRef.current.innerText = 'Deleting...';
         btnRef.current.disabled = true;
-        await deleteTodo((formRef.current['todoId'] as HTMLButtonElement).value);
+        await deleteTodo((formRef.current['todoId'] as HTMLButtonElement).value, controller.signal);
 
         btnRef.current.innerText = 'Delete';
         btnRef.current.disabled = false;
@@ -158,7 +153,7 @@ export function TodoItem({ id, todo, onClick }: TodoItemProps) {
             <a href={`/todos/${id}`} onclick={onClick}>{todo}</a>
             &nbsp;
             <form style='display: inline' onsubmit={onSubmit} ref={formRef}>
-                <button name="todoId" value={id} ref={btnRef}>
+                <button name='todoId' value={id} ref={btnRef}>
                     Delete
                 </button>
             </form>
@@ -166,49 +161,68 @@ export function TodoItem({ id, todo, onClick }: TodoItemProps) {
     );
 }
 
-async function todoLoader(params: { id: string }): Promise<string> {
-    let todos = await getTodos();
+async function todoLoader(params: Params, signal: AbortSignal): Promise<string> {
+    let todos = await getTodos(signal);
     if (!params.id) {
-        throw new Error("Expected params.id");
+        throw new Error('Expected params.id');
     }
     let todo = todos[params.id];
     if (!todo) {
-        throw new Error(`Uh oh, I couldn't find a todo with id "${params.id}"`);
+        throw new Error(`Uh oh, I couldn't find a todo with id '${params.id}'`);
     }
     return todo;
 }
 
-export function Todo(props: any, ctx: any) {
+export function Todo({ props }: { props: UnloadProps }, ctx: Context) {
     const t = document.createComment('Todo will appear here soon');
     const { params } = ctx.router;
-    todoLoader(params).then(todo => {
+
+    const controller = new AbortController();
+
+    props.onunload = () => controller.abort();
+
+    todoLoader(params, controller.signal).then(todo => {
         t.parentNode.replaceChild(<><h2>Nested Todo Route:</h2>
             <p>id: {params.id}</p>
             <p>todo: {todo}</p></>, t);
-    }).catch(error=>{
-        const router = {...ctx.router, error};
-        t.parentNode.replaceChild(<ErrorBoundary router={router}></ErrorBoundary>, t);    
+    }).catch(error => {
+        console.log(error);
+        const router = { ...ctx.router, error };
+        t.parentNode?.replaceChild(<ErrorBoundary router={router}></ErrorBoundary>, t);
     });
+
     return t;
 }
 
-export function AwaitPage() {
+export interface UnloadProps { onunload?: () => void };
+
+export function AwaitPage({ props }: { props: UnloadProps }) {
     const r: { current?: HTMLElement } = {};
     const t = <p ref={r}>Awaiting raw promise</p>;
 
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    props.onunload = () => controller.abort();
+
     const rawPromise: Promise<string> = new Promise((resolve, reject) => {
-        setTimeout(() => {
+        const timeout = setTimeout(() => {
             resolve('Resolved raw promise!');
-        }, 1000);
+        }, 5000);
+
+        signal.addEventListener('abort', () => {
+            clearInterval(timeout);
+            reject('Rejected raw promise!')
+        });
     });
 
     rawPromise.then(data => r.current.innerText = data)
-        .catch(err => r.current.innerText = 'Rejected raw promise!');
+        .catch(console.log);
 
     return t;
 }
 
-export function LongLoad() {
+export function LongLoad({ props }: { props: UnloadProps }) {
     const r: { current?: HTMLElement } = {};
     const s = 'Loading...';
     const p = <p ref={r}>{s}</p>;
@@ -222,6 +236,9 @@ export function LongLoad() {
         }
 
     }, 1000);
+
+    props.onunload = () => clearInterval(id);
+
     return p;
 }
 

@@ -22,12 +22,19 @@ function initializeTodos(): Todos {
     return todos;
 }
 
-export function sleep(n: number = 500) {
-    return new Promise((r) => setTimeout(r, n));
+export function sleep(n: number, signal: AbortSignal) {
+    return new Promise((resolve, reject) => {
+        const timeout = setTimeout(resolve, n);
+        signal.addEventListener('abort', () => {
+            clearInterval(timeout);
+            reject('Sleep rejected!');
+        });
+    }
+    );
 }
 
-export async function getTodos(): Promise<Todos> {
-    await sleep(2000);
+export async function getTodos(signal: AbortSignal): Promise<Todos> {
+    await sleep(2000, signal);
 
     let todos: Todos | null = null;
     try {
@@ -39,15 +46,15 @@ export async function getTodos(): Promise<Todos> {
     return todos;
 }
 
-export async function addTodo(todo: string): Promise<void> {
-    const todos = await getTodos();
+export async function addTodo(todo: string, signal: AbortSignal): Promise<void> {
+    const todos = await getTodos(signal);
     let newTodos = { ...todos };
     newTodos[uuid()] = todo;
     saveTodos(newTodos);
 }
 
-export async function deleteTodo(id: string): Promise<void> {
-    const todos = await getTodos();
+export async function deleteTodo(id: string, signal: AbortSignal): Promise<void> {
+    const todos = await getTodos(signal);
     let newTodos = { ...todos };
     delete newTodos[id];
     saveTodos(newTodos);
