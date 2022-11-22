@@ -1,12 +1,15 @@
 import { addTodo, deleteTodo, getTodos } from './todos';
 import { Context, Params, RouterContext } from 'only-jsx-router';
 
+export interface WithUnload { onunload?: () => void };
+export interface WithStateProps {state: WithUnload};
+
 function onClick(ctx: Context, e: Event) {
     e.preventDefault();
     ctx.router?.navigate((e.target as HTMLAnchorElement).href);
 }
 
-export function Layout(props: any, ctx: Context) {
+export function Layout(state: any, ctx: Context) {
     const onclick = onClick.bind(this, ctx);
     return (
         <>
@@ -38,7 +41,7 @@ export function Home() {
     </>
 }
 
-export function TodosList({ props }: { props: UnloadProps }, ctx: Context) {
+export function TodosList({ state }: WithStateProps, ctx: Context) {
 
     const btnRef: { current?: HTMLButtonElement } = {};
     const urRef: { current?: HTMLElement } = {};
@@ -55,14 +58,14 @@ export function TodosList({ props }: { props: UnloadProps }, ctx: Context) {
     function fillTodos(todos: object) {
         Object.entries(todos).forEach(([id, todo]) => {
             urRef.current.appendChild(<li>
-                <TodoItem id={id} todo={todo} onClick={onclick} props={props}/>
+                <TodoItem id={id} todo={todo} onClick={onclick} state={state}/>
             </li>);
         });
     }
 
     const controller = new AbortController();
 
-    props.onunload = () => controller.abort();
+    state.onunload = () => controller.abort();
 
     async function onSubmit(e: MouseEvent) {
         e.preventDefault();
@@ -116,14 +119,14 @@ export function ErrorBoundary({ router }: { router: RouterContext }) {
     );
 }
 
-interface TodoItemProps {
+interface TodoItemstate {
     id: string;
     todo: string;
     onClick: (e: Event) => void;
-    props: UnloadProps;
+    state: WithUnload;
 }
 
-export function TodoItem({ id, todo, onClick, props }: TodoItemProps) {
+export function TodoItem({ id, todo, onClick, state }: TodoItemstate) {
 
     const btnRef: { current?: HTMLButtonElement } = {};
     const formRef: { current?: HTMLFormElement } = {};
@@ -133,7 +136,7 @@ export function TodoItem({ id, todo, onClick, props }: TodoItemProps) {
 
         const controller = new AbortController();
 
-        props.onunload = () => controller.abort();
+        state.onunload = () => controller.abort();
 
         btnRef.current.innerText = 'Deleting...';
         btnRef.current.disabled = true;
@@ -173,13 +176,13 @@ async function todoLoader(params: Params, signal: AbortSignal): Promise<string> 
     return todo;
 }
 
-export function Todo({ props }: { props: UnloadProps }, ctx: Context) {
+export function Todo({ state }: WithStateProps, ctx: Context) {
     const t = document.createComment('Todo will appear here soon');
     const { params } = ctx.router;
 
     const controller = new AbortController();
 
-    props.onunload = () => controller.abort();
+    state.onunload = () => controller.abort();
 
     todoLoader(params, controller.signal).then(todo => {
         t.parentNode.replaceChild(<><h2>Nested Todo Route:</h2>
@@ -194,16 +197,14 @@ export function Todo({ props }: { props: UnloadProps }, ctx: Context) {
     return t;
 }
 
-export interface UnloadProps { onunload?: () => void };
-
-export function AwaitPage({ props }: { props: UnloadProps }) {
+export function AwaitPage({ state }: WithStateProps) {
     const r: { current?: HTMLElement } = {};
     const t = <p ref={r}>Awaiting raw promise</p>;
 
     const controller = new AbortController();
     const signal = controller.signal;
 
-    props.onunload = () => controller.abort();
+    state.onunload = () => controller.abort();
 
     const rawPromise: Promise<string> = new Promise((resolve, reject) => {
         const timeout = setTimeout(() => {
@@ -222,7 +223,7 @@ export function AwaitPage({ props }: { props: UnloadProps }) {
     return t;
 }
 
-export function LongLoad({ props }: { props: UnloadProps }) {
+export function LongLoad({ state }: WithStateProps) {
     const r: { current?: HTMLElement } = {};
     const s = 'Loading...';
     const p = <p ref={r}>{s}</p>;
@@ -237,7 +238,7 @@ export function LongLoad({ props }: { props: UnloadProps }) {
 
     }, 1000);
 
-    props.onunload = () => clearInterval(id);
+    state.onunload = () => clearInterval(id);
 
     return p;
 }

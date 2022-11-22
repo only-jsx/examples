@@ -8,7 +8,7 @@ import {
     LongLoad,
     ErrorComponent,
     AwaitPage,
-    UnloadProps,
+    WithUnload,
 } from "./routes";
 
 import { Router, Route } from 'only-jsx-router';
@@ -22,20 +22,20 @@ const App = ({ props }: { props: AppProps }): DocumentFragment => {
     const ctx: any = {};
     setContext(Router, ctx);
 
-    const unloadProps: UnloadProps = {};
+    const unloadState: WithUnload = {};
 
     let r = <Router>
         <Route path="/(.*)">
             <Layout />
             <Route path="home"><Home /></Route>
-            <Route path="await"><AwaitPage props={unloadProps}/></Route>
-            <Route path="long-load"><LongLoad props={unloadProps}/></Route>
+            <Route path="await"><AwaitPage state={unloadState}/></Route>
+            <Route path="long-load"><LongLoad state={unloadState}/></Route>
             <Route path="todos" error={ErrorBoundary}>
-                <TodosList props={unloadProps}/>
+                <TodosList state={unloadState}/>
             </Route>
             <Route path="todos/(.*)" error={ErrorBoundary}>
                 <h5>Todo</h5>
-                <Route path=":id"><Todo props={unloadProps}/></Route>
+                <Route path=":id"><Todo state={unloadState}/></Route>
             </Route>
             <Route path="error" error={ErrorBoundary}><ErrorComponent/></Route>
             <Route><Fallback /></Route>
@@ -43,8 +43,8 @@ const App = ({ props }: { props: AppProps }): DocumentFragment => {
     </Router>
 
     ctx.router.onnavigate = ()=>{
-        unloadProps.onunload?.();
-        unloadProps.onunload = undefined;
+        unloadState.onunload?.();
+        unloadState.onunload = undefined;
     }
 
     props.onunload = ()=>{
