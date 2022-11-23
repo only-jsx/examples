@@ -133,6 +133,16 @@ export function TodoItem({ id, todo, onClick, state }: TodoItemstate) {
     const btnRef: { current?: HTMLButtonElement } = {};
     const formRef: { current?: HTMLFormElement } = {};
 
+    const e = <>
+        <a href={`/todos/${id}`} onclick={onClick}>{todo}</a>
+        &nbsp;
+        <form style='display: inline' onsubmit={onSubmit} ref={formRef}>
+            <button name='todoId' value={id} ref={btnRef}>
+                Delete
+            </button>
+        </form>
+    </>
+
     async function onSubmit(e: MouseEvent) {
         e.preventDefault();
 
@@ -154,17 +164,7 @@ export function TodoItem({ id, todo, onClick, state }: TodoItemstate) {
         return false;
     }
 
-    return (
-        <>
-            <a href={`/todos/${id}`} onclick={onClick}>{todo}</a>
-            &nbsp;
-            <form style='display: inline' onsubmit={onSubmit} ref={formRef}>
-                <button name='todoId' value={id} ref={btnRef}>
-                    Delete
-                </button>
-            </form>
-        </>
-    );
+    return e;
 }
 
 async function todoLoader(params: Params, signal: AbortSignal): Promise<string> {
