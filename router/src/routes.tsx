@@ -253,5 +253,5 @@ export function ErrorComponent() {
 }
 
 export function Fallback() {
-    return <p>Route does not exists</p>;
+    return <p>Route does not exist</p>;
 }
