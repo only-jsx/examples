@@ -9,10 +9,6 @@
     },
     "author": "",
     "license": "ISC",
-    "dependencies": {
-        "only-jsx": "^0.0.1-beta.7",
-        "only-jsx-router": "^0.0.1-beta.10"
-    },
     "devDependencies": {
         "@types/node": "^16.11.51",
         "html-webpack-plugin": "^5.5.0",
@@ -22,5 +18,9 @@
         "webpack": "^5.74.0",
         "webpack-cli": "^4.10.0",
         "webpack-dev-server": "^4.11.1"
+    },
+    "dependencies": {
+        "only-jsx": "^0.0.1-beta.8",
+        "only-jsx-router": "^0.0.1-beta.12"
     }
 }
