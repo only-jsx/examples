@@ -25,7 +25,7 @@ const App = ({ props }: { props: AppProps }): DocumentFragment => {
     const state: UnloadState = {};
 
     let r = <Router>
-        <Route path="/(.*)">
+        <Route path="/router/(.*)">
             <Layout />
             <Route path="home"><Home /></Route>
             <Route path="await"><AwaitPage state={state}/></Route>

@@ -14,20 +14,20 @@ export function Layout(state: any, ctx: Context) {
     return (
         <>
             <nav>
-                <a href='/home' onclick={onclick}>Home</a>
+                <a href='/router/home' onclick={onclick}>Home</a>
                 &nbsp;|&nbsp;
-                <a href='/todos' onclick={onclick}>Todos</a>
+                <a href='/router/todos' onclick={onclick}>Todos</a>
                 &nbsp;|&nbsp;
-                <a href='/await' onclick={onclick}>Await</a>
+                <a href='/router/await' onclick={onclick}>Await</a>
                 &nbsp;|&nbsp;
-                <a href='/long-load' onclick={onclick}>Long Load</a>
+                <a href='/router/long-load' onclick={onclick}>Long Load</a>
                 &nbsp;|&nbsp;
-                <a href='/error' onclick={onclick}>Error</a>
+                <a href='/router/error' onclick={onclick}>Error</a>
                 &nbsp;|&nbsp;
-                <a href='/wrong' onclick={onclick}>Wrong path</a>
+                <a href='/router/wrong' onclick={onclick}>Wrong path</a>
             </nav>
             <p>
-                Click on over to <a href='/todos' onclick={onclick}>/todos</a> and check out these
+                Click on over to <a href='/router/todos' onclick={onclick}>/todos</a> and check out these
                 data loading APIs!
             </p>
         </>
@@ -50,7 +50,7 @@ export function TodosList({ state }: PropsWithState, ctx: Context) {
     const onclick = onClick.bind(this, ctx);
 
     const firstItem = <li>
-        <a href='/todos/junk' onclick={onclick}>
+        <a href='/router/todos/junk' onclick={onclick}>
             Click this a to force an error in the loader
         </a>
     </li>;
@@ -134,7 +134,7 @@ export function TodoItem({ id, todo, onClick, state }: TodoItemstate) {
     const formRef: { current?: HTMLFormElement } = {};
 
     const e = <>
-        <a href={`/todos/${id}`} onclick={onClick}>{todo}</a>
+        <a href={`/router/todos/${id}`} onclick={onClick}>{todo}</a>
         &nbsp;
         <form style='display: inline' onsubmit={onSubmit} ref={formRef}>
             <button name='todoId' value={id} ref={btnRef}>

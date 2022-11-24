@@ -13,6 +13,7 @@ export default {
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'bundle.js',
+        publicPath: '/router'
     },
     resolve: {
         extensions: ['.tsx', '.ts', '...'],
@@ -36,7 +37,9 @@ export default {
     devServer: {
         static: {
             directory: path.join(__dirname, '.'),
+            publicPath: '/router',
         },
+        open: ['/router'],
         hot: true,
         port: 3000,
         historyApiFallback: true,
