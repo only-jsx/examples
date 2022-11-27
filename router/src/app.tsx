@@ -25,29 +25,32 @@ const App = ({ props }: { props: AppProps }): DocumentFragment => {
     const state: UnloadState = {};
 
     let r = <Router>
+        <Route path="/router">
+            <Layout />
+        </Route>
         <Route path="/router/(.*)">
             <Layout />
             <Route path="home"><Home /></Route>
-            <Route path="await"><AwaitPage state={state}/></Route>
-            <Route path="long-load"><LongLoad state={state}/></Route>
+            <Route path="await"><AwaitPage state={state} /></Route>
+            <Route path="long-load"><LongLoad state={state} /></Route>
             <Route path="todos" error={ErrorBoundary}>
-                <TodosList state={state}/>
+                <TodosList state={state} />
             </Route>
             <Route path="todos/(.*)" error={ErrorBoundary}>
                 <h5>Todo</h5>
-                <Route path=":id"><Todo state={state}/></Route>
+                <Route path=":id"><Todo state={state} /></Route>
             </Route>
-            <Route path="error" error={ErrorBoundary}><ErrorComponent/></Route>
+            <Route path="error" error={ErrorBoundary}><ErrorComponent /></Route>
             <Route><Fallback /></Route>
         </Route>
     </Router>
 
-    ctx.router.onnavigate = ()=>{
+    ctx.router.onnavigate = () => {
         state.onunload?.();
         state.onunload = undefined;
     }
 
-    props.onunload = ()=>{
+    props.onunload = () => {
         ctx.router.onnavigate();
         ctx.router.onunload?.();
     };
