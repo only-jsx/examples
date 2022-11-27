@@ -4,30 +4,31 @@ import { Context, Params, RouterContext } from 'only-jsx-router';
 export interface UnloadState { onunload?: () => void };
 export interface PropsWithState { state: UnloadState };
 
-function onClick(ctx: Context, e: Event) {
+function clickLink(ctx: Context, replace: boolean, e: Event) {
     e.preventDefault();
-    ctx.router?.navigate((e.target as HTMLAnchorElement).href);
+    ctx.router?.navigate((e.target as HTMLAnchorElement).href, undefined, replace);
 }
 
 export function Layout(state: any, ctx: Context) {
-    const onclick = onClick.bind(this, ctx);
+    const onClick = clickLink.bind(this, ctx, false);
+    const onClickReplace = clickLink.bind(this, ctx, true);
     return (
         <>
             <nav>
-                <a href='/router/home' onclick={onclick}>Home</a>
+                <a href='/router/home' onclick={onClickReplace}>Home</a>
                 &nbsp;|&nbsp;
-                <a href='/router/todos' onclick={onclick}>Todos</a>
+                <a href='/router/todos' onclick={onClickReplace}>Todos</a>
                 &nbsp;|&nbsp;
-                <a href='/router/await' onclick={onclick}>Await</a>
+                <a href='/router/await' onclick={onClickReplace}>Await</a>
                 &nbsp;|&nbsp;
-                <a href='/router/long-load' onclick={onclick}>Long Load</a>
+                <a href='/router/long-load' onclick={onClickReplace}>Long Load</a>
                 &nbsp;|&nbsp;
-                <a href='/router/error' onclick={onclick}>Error</a>
+                <a href='/router/error' onclick={onClickReplace}>Error</a>
                 &nbsp;|&nbsp;
-                <a href='/router/wrong' onclick={onclick}>Wrong path</a>
+                <a href='/router/wrong' onclick={onClickReplace}>Wrong path</a>
             </nav>
             <p>
-                Click on over to <a href='/router/todos' onclick={onclick}>/todos</a> and check out these
+                Click on over to <a href='/router/todos' onclick={onClick}>/todos</a> and check out these
                 data loading APIs!
             </p>
         </>
@@ -47,7 +48,7 @@ export function TodosList({ state }: PropsWithState, ctx: Context) {
     const urRef: { current?: HTMLElement } = {};
     const formRef: { current?: HTMLFormElement } = {};
 
-    const onclick = onClick.bind(this, ctx);
+    const onclick = clickLink.bind(this, ctx, false);
 
     const firstItem = <li>
         <a href='/router/todos/junk' onclick={onclick}>
