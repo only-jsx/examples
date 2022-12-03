@@ -7,10 +7,10 @@
         "build": "webpack --mode=production",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
-    "author": "",
+    "author": "vyatkin0",
     "license": "ISC",
     "dependencies": {
-        "only-jsx": "^0.0.1-beta.9",
+        "only-jsx": "^0.0.2-beta.12",
         "web-vitals": "^2.1.4"
     },
     "devDependencies": {
