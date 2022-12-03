@@ -24,12 +24,16 @@ const App = ({ props }: { props: AppProps }): DocumentFragment => {
 
     const state: UnloadState = {};
 
-    let r = <Router>
-        <Route path="/router">
+    const onnavigate = () => {
+        state.onunload?.();
+        state.onunload = undefined;
+    }
+
+    let r = <Router onnavigate={onnavigate}>
+        <Route path="/router(.*)">
             <Layout />
         </Route>
         <Route path="/router/(.*)">
-            <Layout />
             <Route path="home"><Home /></Route>
             <Route path="await"><AwaitPage state={state} /></Route>
             <Route path="long-load"><LongLoad state={state} /></Route>
@@ -45,15 +49,11 @@ const App = ({ props }: { props: AppProps }): DocumentFragment => {
         </Route>
     </Router>
 
-    ctx.router.onnavigate = () => {
-        state.onunload?.();
-        state.onunload = undefined;
-    }
-
     props.onunload = () => {
-        ctx.router.onnavigate();
+        onnavigate();
         ctx.router.onunload?.();
     };
+
     return r;
 }
 

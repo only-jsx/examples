@@ -7,7 +7,7 @@
         "build": "webpack --mode=production",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
-    "author": "",
+    "author": "only-jsx",
     "license": "ISC",
     "devDependencies": {
         "@types/node": "^16.11.51",
@@ -20,7 +20,7 @@
         "webpack-dev-server": "^4.11.1"
     },
     "dependencies": {
-        "only-jsx": "^0.0.1-beta.9",
-        "only-jsx-router": "^0.0.1-beta.16"
+        "only-jsx": "^0.0.2-beta.12",
+        "only-jsx-router": "^0.0.9-beta.5"
     }
 }
