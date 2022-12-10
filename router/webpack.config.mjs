@@ -39,7 +39,7 @@ export default {
             directory: path.join(__dirname, '.'),
             publicPath: '/router',
         },
-        open: ['/router'],
+        open: ['/router#/router'],
         hot: true,
         port: 3000,
         historyApiFallback: true,
