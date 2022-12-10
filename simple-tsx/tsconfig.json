@@ -5,6 +5,10 @@
         "noImplicitAny": true,
         "module": "ESNext",
         "target": "es5",
+        "lib": [
+            "ES5",
+            "DOM"
+        ],
         "jsx": "react-jsx",
         "jsxImportSource": "only-jsx",
         "allowJs": false,

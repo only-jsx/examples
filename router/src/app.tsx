@@ -11,17 +11,47 @@ import {
     UnloadState,
 } from "./routes";
 
-import { Router, Route } from 'only-jsx-router';
+import { Router, Route, PathMatch, Params, Context } from 'only-jsx-router';
 import { setContext } from 'only-jsx/jsx-runtime';
+import { tokensToRegexp, parse, Key } from 'path-to-regexp';
 
 export interface AppProps {
     onunload?: () => void;
 }
 
-const App = ({ props }: { props: AppProps }): DocumentFragment => {
-    const ctx: any = {};
-    setContext(Router, ctx);
+function match(path: string): PathMatch {
+    const keys: Key[] = [];
+    const tokens = parse(path[0] === '#' ? path : '#' + path);
+    const pattern = tokensToRegexp(tokens, keys);
 
+    const { hash } = window.location;
+    const match = pattern.exec(hash);
+    if (!match) {
+        return {};
+    }
+
+    const params: Params = {};
+    for (let i = 1; i < match.length; i++) {
+        params[keys[i - 1]['name']] = match[i];
+    }
+
+    let nextPath = '';
+    if (typeof tokens[0] === 'string') {
+        nextPath = (tokens[1] as Key)?.prefix ? tokens[0] + (tokens[1] as Key).prefix : tokens[0];
+    } else {
+        nextPath = tokens[0].prefix || '';
+    }
+
+    return { match, params, nextPath };
+}
+
+function getCurrentPath() {
+    return window.location.hash;
+}
+
+const App = ({ props, hash }: { props: AppProps, hash?: boolean }): DocumentFragment => {
+    const ctx: Context = { router: {} };
+    setContext(Router, ctx);
     const state: UnloadState = {};
 
     const onnavigate = () => {
@@ -29,7 +59,40 @@ const App = ({ props }: { props: AppProps }): DocumentFragment => {
         state.onunload = undefined;
     }
 
-    let r = <Router onnavigate={onnavigate}>
+    function hashNavigate(path: string, data?: any, replace?: boolean) {
+        if (replace) {
+            window.location.replace('#' + path);
+        } else {
+            window.location.assign('#' + path);
+        }
+    }
+    
+    function historyNavigate(path: string, data?: any, replace?: boolean) {
+        if (replace) {
+            window.history.replaceState(data, '', path + window.location.hash);
+        } else {
+            window.history.pushState(data, '', path + window.location.hash);
+        }
+        ctx.router.update();
+    }
+
+    let navigate : (path: string, data?: any, replace?: boolean)=>void;
+
+    if (hash) {
+        navigate = hashNavigate;
+        ctx.router.match = match;
+        ctx.router.changeEvent = 'hashchange';
+        ctx.router.getCurrentPath = getCurrentPath;
+    } else {
+        navigate = historyNavigate;
+    }
+
+    ctx.router.navigate = (path: string) => {
+        onnavigate();
+        navigate(path);
+    }
+
+    const r = <Router>
         <Route path="/router(.*)">
             <Layout />
         </Route>

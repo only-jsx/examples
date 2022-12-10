@@ -20,7 +20,8 @@
         "webpack-dev-server": "^4.11.1"
     },
     "dependencies": {
-        "only-jsx": "^0.0.2-beta.12",
-        "only-jsx-router": "^0.0.9-beta.5"
+        "only-jsx": "^0.0.3-beta.4",
+        "only-jsx-router": "^0.0.9-beta.10",
+        "path-to-regexp": "^6.2.1"
     }
 }

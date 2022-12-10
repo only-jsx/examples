@@ -6,7 +6,7 @@ export interface PropsWithState { state: UnloadState };
 
 function clickLink(ctx: Context, replace: boolean, e: Event) {
     e.preventDefault();
-    ctx.router?.navigate((e.target as HTMLAnchorElement).href, undefined, replace);
+    ctx.router?.navigate((e.target as HTMLAnchorElement).pathname, undefined, replace);
 }
 
 export function Layout(state: any, ctx: Context) {
@@ -189,14 +189,35 @@ export function Todo({ state }: PropsWithState, ctx: Context) {
     state.onunload = () => controller.abort();
 
     todoLoader(params, controller.signal).then(todo => {
-        t.parentNode.replaceChild(<><h2>Nested Todo Route:</h2>
+
+        const fragment = <><h2>Nested Todo Route:</h2>
             <p>id: {params.id}</p>
-            <p>todo: {todo}</p></>, t);
+            <p>todo: {todo}</p></>;
+
+        const children: HTMLElement[] = Array.from(fragment.children);
+
+        //Because this component inserts fragment into Router component
+        //all child elements of this fragment will be inserted directly to
+        //Router parent element. Routers'r update implementation is unable
+        //handle these new children, so it is necessary to handle this case
+        //manually.
+        //Another way to avoid this is just replacing Fragment by normal
+        //html element like div or article 
+        state.onunload = ()=>{
+            children.forEach(e => e.remove());
+        }
+
+        t.parentNode.replaceChild(fragment, t);
     }).catch(error => {
         console.log(error);
         const router = { ...ctx.router, error };
-        t.parentNode?.replaceChild(<ErrorBoundary router={router}></ErrorBoundary>, t);
-    }).finally(() => delete state.onunload);
+        const fragment = <ErrorBoundary router={router}></ErrorBoundary>;
+        const children: HTMLElement[] = Array.from(fragment.children);
+        state.onunload = ()=>{
+            children.forEach(e => e.remove());
+        }
+        t.parentNode?.replaceChild(fragment, t);
+    });
 
     return t;
 }
@@ -235,9 +256,16 @@ export function LongLoad({ state }: PropsWithState) {
     let n = s.length;
     const id = setInterval(() => {
         if (--n < 1) {
-            r.current.parentNode.replaceChild(<h1>👋</h1>, r.current);
+            const newChild = <h1>👋</h1>;
+            r.current.parentNode?.replaceChild(newChild, r.current);
             clearInterval(id);
-            delete state.onunload;
+            state.onunload = () => {
+                //This component replaces a child of parent Router component
+                //Routers'r update implementation is unable to handle this new child,
+                //so it is necessary to handle this manually.
+                //Another way to avoid this is to simply not mutate the parent nodes.
+                newChild.remove();
+            }
         } else {
             r.current.innerText = s.substring(0, n);
         }
