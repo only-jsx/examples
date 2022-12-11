@@ -5,6 +5,10 @@
         "noImplicitAny": true,
         "module": "ESNext",
         "target": "es5",
+        "types": [
+            "node",
+            "jest"
+        ],
         "lib": [
             "ES5",
             "DOM"
@@ -13,5 +17,6 @@
         "jsxImportSource": "only-jsx",
         "allowJs": false,
         "moduleResolution": "node",
+        "allowSyntheticDefaultImports": true,
     }
 }

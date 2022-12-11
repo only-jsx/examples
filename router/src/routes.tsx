@@ -52,7 +52,7 @@ export function TodosList({ state }: PropsWithState, ctx: Context) {
 
     const firstItem = <li>
         <a href='/router/todos/junk' onclick={onclick}>
-            Click this a to force an error in the loader
+            Click this link to force an error in the loader
         </a>
     </li>;
 
@@ -91,7 +91,10 @@ export function TodosList({ state }: PropsWithState, ctx: Context) {
         return false;
     }
 
-    getTodos(controller.signal).then(fillTodos).finally(() => delete state.onunload);
+    getTodos(controller.signal)
+        .then(fillTodos)
+        .catch(() => { })
+        .finally(() => delete state.onunload);
 
     const e = <>
         <h2>Todos</h2>
@@ -203,7 +206,7 @@ export function Todo({ state }: PropsWithState, ctx: Context) {
         //manually.
         //Another way to avoid this is just replacing Fragment by normal
         //html element like div or article 
-        state.onunload = ()=>{
+        state.onunload = () => {
             children.forEach(e => e.remove());
         }
 
@@ -213,7 +216,7 @@ export function Todo({ state }: PropsWithState, ctx: Context) {
         const router = { ...ctx.router, error };
         const fragment = <ErrorBoundary router={router}></ErrorBoundary>;
         const children: HTMLElement[] = Array.from(fragment.children);
-        state.onunload = ()=>{
+        state.onunload = () => {
             children.forEach(e => e.remove());
         }
         t.parentNode?.replaceChild(fragment, t);
