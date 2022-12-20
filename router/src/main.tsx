@@ -6,7 +6,7 @@ function render() {
     const appProps: AppProps = {};
     const hashAppProps: AppProps = {};
 
-    root.replaceChildren(<>
+    root?.replaceChildren(<>
         <h2>This part is routed by History</h2>
         <App props={appProps} />
         <h2>This part is routed by Url hash</h2>

@@ -1,4 +1,5 @@
 import { addTodo, deleteTodo, getTodos } from './todos';
+import { Options } from 'only-jsx/jsx-runtime';
 import { Context, Params, RouterContext } from 'only-jsx-router';
 
 export interface UnloadState { onunload?: () => void };
@@ -6,12 +7,12 @@ export interface PropsWithState { state: UnloadState };
 
 function clickLink(ctx: Context, replace: boolean, e: Event) {
     e.preventDefault();
-    ctx.router?.navigate((e.target as HTMLAnchorElement).pathname, undefined, replace);
+    ctx.router.navigate?.((e.target as HTMLAnchorElement).pathname, undefined, replace);
 }
 
 export function Layout(state: any, ctx: Context) {
-    const onClick = clickLink.bind(this, ctx, false);
-    const onClickReplace = clickLink.bind(this, ctx, true);
+    const onClick = clickLink.bind(undefined, ctx, false);
+    const onClickReplace = clickLink.bind(undefined, ctx, true);
     return (
         <>
             <nav>
@@ -48,7 +49,9 @@ export function TodosList({ state }: PropsWithState, ctx: Context) {
     const urRef: { current?: HTMLElement } = {};
     const formRef: { current?: HTMLFormElement } = {};
 
-    const onclick = clickLink.bind(this, ctx, false);
+    const onclick = function (e: Event) {
+        clickLink(ctx, false, e);
+    }
 
     const firstItem = <li>
         <a href='/router/todos/junk' onclick={onclick}>
@@ -58,7 +61,7 @@ export function TodosList({ state }: PropsWithState, ctx: Context) {
 
     function fillTodos(todos: object) {
         Object.entries(todos).forEach(([id, todo]) => {
-            urRef.current.appendChild(<li>
+            urRef.current?.appendChild(<li>
                 <TodoItem id={id} todo={todo} onClick={onclick} state={state} />
             </li>);
         });
@@ -71,18 +74,22 @@ export function TodosList({ state }: PropsWithState, ctx: Context) {
     async function onSubmit(e: MouseEvent) {
         e.preventDefault();
 
-        btnRef.current.innerText = 'Adding...';
-        btnRef.current.disabled = true;
-
+        if (btnRef.current) {
+            btnRef.current.innerText = 'Adding...';
+            btnRef.current.disabled = true;
+        }
         state.onunload = () => controller.abort();
-        await addTodo((formRef.current['todo'] as HTMLInputElement).value, controller.signal);
+        await addTodo((formRef.current?.['todo'] as HTMLInputElement).value, controller.signal);
 
         const todos = await getTodos(controller.signal);
         delete state.onunload;
 
-        btnRef.current.innerText = 'Add';
-        btnRef.current.disabled = false;
-        urRef.current.replaceChildren(firstItem);
+        if (btnRef.current) {
+            btnRef.current.innerText = 'Add';
+            btnRef.current.disabled = false;
+        }
+
+        urRef.current?.replaceChildren(firstItem);
 
         fillTodos(todos);
 
@@ -115,14 +122,13 @@ export function TodosList({ state }: PropsWithState, ctx: Context) {
 }
 
 export function ErrorBoundary({ router }: { router: RouterContext }) {
-    return (
-        <>
-            <h2>Error 💥</h2>
-            <p>At path '{router.path}'</p>
-            <p>Params: {JSON.stringify(router.params)}</p>
-            <p>{router.error.message}</p>
-        </>
-    );
+    const message = router.error instanceof Error ? router.error.message : '';
+    return <>
+        <h2>Error 💥</h2>
+        <p>At path '{router.path}'</p>
+        <p>Params: {JSON.stringify(router.params)}</p>
+        <p>{message}</p>
+    </>;
 }
 
 interface TodoItemstate {
@@ -154,16 +160,23 @@ export function TodoItem({ id, todo, onClick, state }: TodoItemstate) {
 
         state.onunload = () => controller.abort();
 
-        btnRef.current.innerText = 'Deleting...';
-        btnRef.current.disabled = true;
-        await deleteTodo((formRef.current['todoId'] as HTMLButtonElement).value, controller.signal);
+        if (btnRef.current) {
+            btnRef.current.innerText = 'Deleting...';
+            btnRef.current.disabled = true;
+        }
+
+        await deleteTodo((formRef.current?.['todoId'] as HTMLButtonElement).value, controller.signal);
+
         delete state.onunload;
 
-        btnRef.current.innerText = 'Delete';
-        btnRef.current.disabled = false;
+        if (btnRef.current) {
+            btnRef.current.innerText = 'Delete';
+            btnRef.current.disabled = false;
+        }
 
-        const li = formRef.current.parentNode;
-        li.parentNode.removeChild(li);
+        const li = formRef.current?.parentNode;
+
+        li?.parentNode?.removeChild(li);
 
         return false;
     }
@@ -183,7 +196,7 @@ async function todoLoader(params: Params, signal: AbortSignal): Promise<string> 
     return todo;
 }
 
-export function Todo({ state }: PropsWithState, ctx: Context) {
+export function Todo({ state }: PropsWithState | Options, ctx: Context) {
     const t = document.createComment('Todo will appear here soon');
     const { params } = ctx.router;
 
@@ -191,36 +204,38 @@ export function Todo({ state }: PropsWithState, ctx: Context) {
 
     state.onunload = () => controller.abort();
 
-    todoLoader(params, controller.signal).then(todo => {
+    if (params) {
+        todoLoader(params, controller.signal).then(todo => {
 
-        const fragment = <><h2>Nested Todo Route:</h2>
-            <p>id: {params.id}</p>
-            <p>todo: {todo}</p></>;
+            const fragment = <><h2>Nested Todo Route:</h2>
+                <p>id: {params.id}</p>
+                <p>todo: {todo}</p></>;
 
-        const children: HTMLElement[] = Array.from(fragment.children);
+            const children: HTMLElement[] = Array.from(fragment.children);
 
-        //Because this component inserts fragment into Router component
-        //all child elements of this fragment will be inserted directly to
-        //Router parent element. Routers'r update implementation is unable
-        //handle these new children, so it is necessary to handle this case
-        //manually.
-        //Another way to avoid this is just replacing Fragment by normal
-        //html element like div or article 
-        state.onunload = () => {
-            children.forEach(e => e.remove());
-        }
+            //Because this component inserts fragment into Router component
+            //all child elements of this fragment will be inserted directly to
+            //Router parent element. Routers'r update implementation is unable
+            //handle these new children, so it is necessary to handle this case
+            //manually.
+            //Another way to avoid this is just replacing Fragment by normal
+            //html element like div or article 
+            state.onunload = () => {
+                children.forEach(e => e.remove());
+            }
 
-        t.parentNode.replaceChild(fragment, t);
-    }).catch(error => {
-        console.log(error);
-        const router = { ...ctx.router, error };
-        const fragment = <ErrorBoundary router={router}></ErrorBoundary>;
-        const children: HTMLElement[] = Array.from(fragment.children);
-        state.onunload = () => {
-            children.forEach(e => e.remove());
-        }
-        t.parentNode?.replaceChild(fragment, t);
-    });
+            t.parentNode?.replaceChild(fragment, t);
+        }).catch(error => {
+            console.log(error);
+            const router = { ...ctx.router, error };
+            const fragment = <ErrorBoundary router={router}></ErrorBoundary>;
+            const children: HTMLElement[] = Array.from(fragment.children);
+            state.onunload = () => {
+                children.forEach(e => e.remove());
+            }
+            t.parentNode?.replaceChild(fragment, t);
+        });
+    }
 
     return t;
 }
@@ -245,7 +260,11 @@ export function AwaitPage({ state }: PropsWithState) {
         });
     });
 
-    rawPromise.then(data => r.current.innerText = data)
+    rawPromise.then(data => {
+        if (r.current) {
+            r.current.innerText = data;
+        }
+    })
         .catch(console.log)
         .finally(() => delete state.onunload);
 
@@ -260,7 +279,7 @@ export function LongLoad({ state }: PropsWithState) {
     const id = setInterval(() => {
         if (--n < 1) {
             const newChild = <h1>👋</h1>;
-            r.current.parentNode?.replaceChild(newChild, r.current);
+            r.current?.parentNode?.replaceChild(newChild, r.current);
             clearInterval(id);
             state.onunload = () => {
                 //This component replaces a child of parent Router component
@@ -270,7 +289,9 @@ export function LongLoad({ state }: PropsWithState) {
                 newChild.remove();
             }
         } else {
-            r.current.innerText = s.substring(0, n);
+            if (r.current) {
+                r.current.innerText = s.substring(0, n);
+            }
         }
 
     }, 1000);

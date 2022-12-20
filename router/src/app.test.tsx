@@ -11,7 +11,7 @@ describe('App tests', () => {
         history.pushState({}, '', navigate);
         const appProps: AppProps = {};
         const app: DocumentFragment = <App props={appProps} />;
-        expect(app.textContent.includes(text)).toBeTruthy();
+        expect(app.textContent?.includes(text)).toBeTruthy();
         appProps.onunload?.();
     });
 

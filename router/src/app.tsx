@@ -54,11 +54,6 @@ const App = ({ props, hash }: { props: AppProps, hash?: boolean }): DocumentFrag
     setContext(Router, ctx);
     const state: UnloadState = {};
 
-    const onnavigate = () => {
-        state.onunload?.();
-        state.onunload = undefined;
-    }
-
     function hashNavigate(path: string, data?: any, replace?: boolean) {
         if (replace) {
             window.location.replace('#' + path);
@@ -73,26 +68,24 @@ const App = ({ props, hash }: { props: AppProps, hash?: boolean }): DocumentFrag
         } else {
             window.history.pushState(data, '', path + window.location.hash);
         }
-        ctx.router.update();
+        ctx.router.update?.();
     }
 
-    let navigate : (path: string, data?: any, replace?: boolean)=>void;
-
     if (hash) {
-        navigate = hashNavigate;
+        ctx.router.navigate = hashNavigate;
         ctx.router.match = match;
         ctx.router.changeEvent = 'hashchange';
         ctx.router.getCurrentPath = getCurrentPath;
     } else {
-        navigate = historyNavigate;
+        ctx.router.navigate = historyNavigate;
     }
 
-    ctx.router.navigate = (path: string) => {
-        onnavigate();
-        navigate(path);
+    const onbeforeupdate = () => {
+        state.onunload?.();
+        state.onunload = undefined;
     }
-
-    const r = <Router>
+    
+    const r = <Router onbeforeupdate={onbeforeupdate}>
         <Route path="/router(.*)">
             <Layout />
         </Route>
@@ -113,7 +106,7 @@ const App = ({ props, hash }: { props: AppProps, hash?: boolean }): DocumentFrag
     </Router>
 
     props.onunload = () => {
-        onnavigate();
+        onbeforeupdate();
         ctx.router.onunload?.();
     };
 

@@ -24,8 +24,8 @@
         "webpack-dev-server": "^4.11.1"
     },
     "dependencies": {
-        "only-jsx": "^0.0.3-beta.9",
-        "only-jsx-router": "^0.0.9-beta.12",
+        "only-jsx": "^0.0.3-beta.10",
+        "only-jsx-router": "^0.0.9-beta.14",
         "path-to-regexp": "^6.2.1"
     }
 }
