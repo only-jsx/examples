@@ -68,7 +68,7 @@ const App = ({ props, hash }: { props: AppProps, hash?: boolean }): DocumentFrag
         } else {
             window.history.pushState(data, '', path + window.location.hash);
         }
-        ctx.router.update();
+        ctx.router.update?.();
     }
 
     if (hash) {

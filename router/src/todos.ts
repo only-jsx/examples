@@ -37,7 +37,10 @@ export async function getTodos(signal: AbortSignal): Promise<Todos> {
 
     let todos: Todos | null = null;
     try {
-        todos = JSON.parse(localStorage.getItem(TODOS_KEY));
+        const item = localStorage.getItem(TODOS_KEY);
+        if (item) {
+            todos = JSON.parse(item);
+        }
     } catch (e) { }
     if (!todos) {
         todos = initializeTodos();
