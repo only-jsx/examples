@@ -1,0 +1,47 @@
+.main {
+    display: flex;
+    align-items: center;
+}
+
+.main>input {
+    position: relative;
+    height: 20px;
+    width: 20px;
+    margin: 0 5px 0 0;
+    background: var(--background-button);
+    border: var(--border-inactive);
+    border-radius: var(--border-radius-small);
+    transition: var(--transition-background-color);
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+}
+
+.main>input:focus {
+    border: var(--border-focus);
+    outline: var(--border-focus);
+    outline-offset: 0px;
+}
+
+.main>input:hover:not(:focus) {
+    border: var(--border-hover);
+}
+
+.main>input:checked {
+    background: var(--background-checkbox-checked);
+}
+
+.main>input:checked:after {
+    content: '';
+    position: absolute;
+    transform: rotate(-45deg);
+    top: 3px;
+    left: 2px;
+    width: 12px;
+    height: 6px;
+    border: 2px solid var(--background-field);
+    border-top-style: none;
+    border-right-style: none;
+}

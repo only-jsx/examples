@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "strict": true,
+        "outDir": "./dist/",
+        "sourceMap": true,
+        "module": "nodenext",
+        "target": "es2016",
+        "lib": [
+            "ES5",
+            "DOM"
+        ],
+        "jsx": "react-jsx",
+        "jsxImportSource": "only-jsx",
+        "allowJs": false,
+        "moduleResolution": "nodenext"
+    }
+}

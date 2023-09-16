@@ -79,7 +79,7 @@ const getStatsInfo = (stats: any): Stats => {
 
 const App = ({props}: {props: AppProps}): DocumentFragment => {
 
-    const e: DocumentFragment = <><p>Loading...</p></>;
+    const e = <p>Loading...</p>;
 
     const controller = new AbortController();
     const signal = controller.signal;
@@ -103,9 +103,9 @@ const App = ({props}: {props: AppProps}): DocumentFragment => {
                 return;
             }
 
-            (e.firstChild as HTMLElement).innerText = 'No data';
+            (e as HTMLElement).innerText = 'No data';
         });
-    }).catch(err => (e.firstChild as HTMLElement).innerText = err.message);
+    }).catch(err => (e as HTMLElement).innerText = err.message);
 
     props.onunload = () => {
         controller.abort();

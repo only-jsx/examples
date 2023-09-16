@@ -1,0 +1,30 @@
+.main {
+    padding: 2px 20px;
+    line-height: 32px;
+    border: var(--border-inactive);
+    border-radius: var(--border-radius-small);
+    cursor: pointer;
+}
+
+.main:focus {
+    border: var(--border-focus);
+    outline: var(--border-focus);
+    outline-offset: 0px;
+}
+
+.error {
+    background: var(--color-error);
+}
+
+.info {
+    background: var(--color-info);
+}
+
+.none {
+    background: transparent;
+}
+
+.title {
+    font-weight: 500;
+    margin-right: 5px;
+}

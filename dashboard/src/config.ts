@@ -1,1 +1,1 @@
-export const apiUrl = (prefix: string)=>`https://${prefix}-ghgwgbpcva-lm.a.run.app`;
+export const apiUrl = (suffix: string)=>`http://github.vyatkin.com/dashboard/api/${suffix}`;

@@ -1,0 +1,30 @@
+.main {
+    padding: 10px;
+    border: var(--border-inactive);
+    border-radius: var(--border-radius-small);
+    background: var(--background-button);
+    color: var(--color-shared-field-text);
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+}
+
+.main:not(:disabled):focus {
+    border: var(--border-focus);
+    outline: var(--border-focus);
+    outline-offset: 0px;
+}
+
+.main:not(:disabled):hover:not(:focus) {
+    border: var(--border-hover);
+}
+
+.main:disabled {
+    opacity: 0.5;
+}
+
+.main:not(:disabled):active {
+    background: var(--background-button-active);
+}

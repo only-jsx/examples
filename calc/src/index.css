@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
+
+:root {
+    --color-shared-primary: #616161;
+    --color-shared-secondary: #BDBDBD;
+    --color-background-body: #F5F5F5;
+    --color-shared-field-text: #212121;
+
+    --color-actions-gray: #BDBDBD;
+    --color-actions-hover: #424242;
+    --color-label-gray: #BDBDBD;
+    --color-label-focus: #1976D2;
+
+    --color-error: #FFCCBC;
+    --color-info: #BBDEFB;
+
+    --background-field: #FFFFFF;
+    --background-card: #FFFFFF;
+    --background-button: #FFFFFF;
+    --background-button-active: #EEEEEE;
+    --background-checkbox-checked: #1976D2;
+    --background-item-hover: #EEEEEE;
+    --background-select-years: #F5F5F5;
+
+    --border-inactive: 1px solid #EFF0F5;
+    --border-focus: 1px solid #1976D2;
+    --border-hover: 1px solid #424242;
+    --border-radius-small: 4px;
+
+    --transition-background-color: background-color .1s ease-in;
+
+    --font-primary: normal normal 16px 'Roboto', sans-serif;
+}
+
+body {
+    padding: 0 100px;
+    margin: 0;
+    font: var(--font-primary);
+    color: var(--color-shared-primary);
+    background-color: var(--color-background-body);
+}
+
+input {
+    font: var(--font-primary);
+}
+
+button {
+    font: var(--font-primary);
+}
