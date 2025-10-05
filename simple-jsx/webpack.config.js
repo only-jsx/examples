@@ -1,14 +1,9 @@
-const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     mode: 'development',
     entry: {
         app: './index.jsx',
-    },
-    output: {
-        path: path.resolve(__dirname, 'dist'),
-        filename: 'bundle.js',
     },
     resolve: {
         extensions: ['.jsx', '...'],
@@ -49,14 +44,12 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: './index.html'
+            template: 'index.html'
         })
     ],
     devtool: 'inline-source-map',
     devServer: {
-        static: {
-            directory: path.join(__dirname, '.'),
-        },
+        static: false,
         hot: true,
         port: 9000,
     }

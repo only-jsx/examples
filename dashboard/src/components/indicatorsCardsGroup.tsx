@@ -1,5 +1,5 @@
 import StatHeader from './statHeader';
-import styles from './indicatorsCardsGroup.module.css';
+import * as styles from './indicatorsCardsGroup.module.css';
 import IndicatorsCard, { IndicatorsCardProps } from './indicatorsCard';
 
 export interface IndicatorsCardsProps {

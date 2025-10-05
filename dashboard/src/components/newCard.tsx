@@ -1,4 +1,4 @@
-import styles from './newCard.module.css';
+import * as styles from './newCard.module.css';
 
 export interface NewCardProps {
     title: string;

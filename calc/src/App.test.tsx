@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom';
 import App from './App';
 import { describe, expect, test } from '@jest/globals';
 

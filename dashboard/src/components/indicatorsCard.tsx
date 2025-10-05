@@ -1,5 +1,5 @@
 import Indicator from './indicator';
-import styles from './indicatorsCard.module.css';
+import * as styles from './indicatorsCard.module.css';
 
 export interface IndicatorProps {
     type: string;

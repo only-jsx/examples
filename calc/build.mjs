@@ -2,13 +2,11 @@
 
 import * as esbuild from 'esbuild';
 import { copyFile } from 'node:fs/promises';
-import cssModulesPlugin from "esbuild-css-modules-plugin";
 
 await esbuild.build({
   entryPoints: ['src/index.tsx'],
   bundle: true,
   outfile: 'dist/main.js',
-  plugins: [cssModulesPlugin()],
   sourcemap: true,
 })
 

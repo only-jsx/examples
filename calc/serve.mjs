@@ -1,13 +1,11 @@
 #!/usr/bin/env node
 
 import * as esbuild from 'esbuild';
-import cssModulesPlugin from "esbuild-css-modules-plugin";
 
 let ctx = await esbuild.context({
   entryPoints: ['src/index.tsx'],
   bundle: true,
   outfile: 'dist/main.js',
-  plugins: [cssModulesPlugin()],
   sourcemap: true,
 })
 

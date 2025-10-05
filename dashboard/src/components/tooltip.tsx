@@ -1,4 +1,4 @@
-import styles from './tooltip.module.css';
+import * as styles from './tooltip.module.css';
 
 interface TooltipProps {
     title: string;

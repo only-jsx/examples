@@ -26,7 +26,7 @@ test('renders todo item page', () => {
 
     const ctx: Context = {
         router: {
-            path: '/react-router/todo/1',
+            path: '/router/todo/1',
             params: { id: '1' },
         }
     };

@@ -1,5 +1,5 @@
 import StatHeader from './statHeader';
-import styles from './newCardsGroup.module.css';
+import * as styles from './newCardsGroup.module.css';
 import NewCard, { NewCardProps } from './newCard';
 import Tooltip from './tooltip';
 import tooltips from '../tooltips.json';

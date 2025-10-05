@@ -1,5 +1,5 @@
 import StatHeader from './statHeader';
-import styles from './doubleIndicatorsCard.module.css';
+import * as styles from './doubleIndicatorsCard.module.css';
 
 interface IndicatorProps {
     type: string;

@@ -14,6 +14,7 @@
         "jsx": "react-jsx",
         "jsxImportSource": "only-jsx",
         "allowJs": false,
-        "moduleResolution": "nodenext"
+        "moduleResolution": "nodenext",
+        "isolatedModules": true
     }
 }

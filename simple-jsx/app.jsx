@@ -1,4 +1,4 @@
-import styles from './app.module.css';
+import * as styles from './app.module.css';
 
 export default ({ props, children, ref }) => {
     const result = {};

@@ -1,4 +1,4 @@
-import styles from './statHeader.module.css';
+import * as styles from './statHeader.module.css';
 
 interface StatHeaderProps {
     title?: string;

@@ -13,34 +13,32 @@ import {
 
 import { Router, Route, PathMatch, Params, Context } from 'only-jsx-router';
 import { setContext } from 'only-jsx/jsx-runtime';
-import { tokensToRegexp, parse, Key } from 'path-to-regexp';
+import { parse, pathToRegexp } from 'path-to-regexp';
 
 export interface AppProps {
     onunload?: () => void;
 }
 
 function match(path: string): PathMatch {
-    const keys: Key[] = [];
-    const tokens = parse(path[0] === '#' ? path : '#' + path);
-    const pattern = tokensToRegexp(tokens, keys);
+    const { tokens } = parse(path[0] === '#' ? path.slice(1) : path);
+    const { regexp, keys } = pathToRegexp(path);
 
     const { hash } = window.location;
-    const match = pattern.exec(hash);
+    const match = regexp.exec(hash.slice(1));
+
     if (!match) {
         return {};
     }
 
     const params: Params = {};
-    for (let i = 1; i < match.length; i++) {
-        params[keys[i - 1]['name']] = match[i];
+
+    for (let i = 0; i < keys.length; i++) {
+        if (keys[i].type === 'param' && match[i + 1]) {
+            params[keys[i].name] = match[i + 1];
+        }
     }
 
-    let nextPath = '';
-    if (typeof tokens[0] === 'string') {
-        nextPath = (tokens[1] as Key)?.prefix ? tokens[0] + (tokens[1] as Key).prefix : tokens[0];
-    } else {
-        nextPath = tokens[0].prefix || '';
-    }
+    const nextPath = tokens[0].type === 'text' ? tokens[0].value : '';
 
     return { match, params, nextPath };
 }
@@ -86,17 +84,17 @@ const App = ({ props, hash }: { props: AppProps, hash?: boolean }): DocumentFrag
     }
     
     const r = <Router onbeforeupdate={onbeforeupdate}>
-        <Route path="/router(.*)">
+        <Route path="/router{*page}">
             <Layout />
         </Route>
-        <Route path="/router/(.*)">
+        <Route path="/router/*page">
             <Route path="home"><Home /></Route>
             <Route path="await"><AwaitPage state={state} /></Route>
             <Route path="long-load"><LongLoad state={state} /></Route>
             <Route path="todos" error={ErrorBoundary}>
                 <TodosList state={state} />
             </Route>
-            <Route path="todos/(.*)" error={ErrorBoundary}>
+            <Route path="todos/*todo" error={ErrorBoundary}>
                 <h5>Todo</h5>
                 <Route path=":id"><Todo state={state} /></Route>
             </Route>

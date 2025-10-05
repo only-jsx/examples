@@ -1,5 +1,5 @@
 import StatHeader from './statHeader';
-import styles from './teamCardsGroup.module.css';
+import * as styles from './teamCardsGroup.module.css';
 import TeamCardsTooltip, { tooltipWidth, TeamCardsTooltipProps } from './teamCardsTooltip';
 
 const tooltipPadding = 24;

@@ -1,4 +1,4 @@
-import styles from './teamCardsTooltip.module.css';
+import * as styles from './teamCardsTooltip.module.css';
 import IndicatorsCardGroup, { IndicatorsCardsProps } from './indicatorsCardsGroup';
 import { IndicatorProps } from './indicatorsCard';
 import { apiUrl } from '../config';

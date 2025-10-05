@@ -1,4 +1,4 @@
-import styles from './indicator.module.css';
+import * as styles from './indicator.module.css';
 
 export interface IdicatorProps {
     name?: string;
