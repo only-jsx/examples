@@ -52,19 +52,21 @@ const App = ({ props, hash }: { props: AppProps, hash?: boolean }): DocumentFrag
     setContext(Router, ctx);
     const state: UnloadState = {};
 
+    const base = '';
+
     function hashNavigate(path: string, data?: any, replace?: boolean) {
         if (replace) {
-            window.location.replace('#' + path);
+            window.location.replace('#' + base + path);
         } else {
-            window.location.assign('#' + path);
+            window.location.assign('#' + base + path);
         }
     }
-    
+
     function historyNavigate(path: string, data?: any, replace?: boolean) {
         if (replace) {
-            window.history.replaceState(data, '', path + window.location.hash);
+            window.history.replaceState(data, '', base + path + window.location.hash);
         } else {
-            window.history.pushState(data, '', path + window.location.hash);
+            window.history.pushState(data, '', base + path + window.location.hash);
         }
         ctx.router.update?.();
     }
@@ -82,12 +84,12 @@ const App = ({ props, hash }: { props: AppProps, hash?: boolean }): DocumentFrag
         state.onunload?.();
         state.onunload = undefined;
     }
-    
+
     const r = <Router onbeforeupdate={onbeforeupdate}>
-        <Route path="/router{*page}">
+        <Route path={base + "/router{*page}"}>
             <Layout />
         </Route>
-        <Route path="/router/*page">
+        <Route path={base + "/router/*page"}>
             <Route path="home"><Home /></Route>
             <Route path="await"><AwaitPage state={state} /></Route>
             <Route path="long-load"><LongLoad state={state} /></Route>
